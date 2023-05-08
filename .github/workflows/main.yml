@@ -37,3 +37,15 @@ jobs:
           registry: ${{ secrets.DOCKERHUB_REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    
+      - name: Portainer Stack Redeploy
+        # You may pin to the exact commit or the version.
+        # uses: wirgen/portainer-stack-redeploy-action@b779a44ee251093b07cab4311458bf4f6f1b866f
+        uses: wirgen/portainer-stack-redeploy-action@v1.1
+        with:
+          # Portainer URL
+          portainerUrl: portainer.23alice.duckdns.org
+          # Portainer access token
+          accessToken: ${{ secrets.PORTAINER_TOKEN }}
+          # Stack ID
+          stackId: graphql
