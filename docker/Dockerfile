@@ -5,6 +5,7 @@ WORKDIR /root
 COPY . /root
 
 RUN yarn install
+RUN yarn config:deploy
 RUN yarn build
 # RUN yarn deploy:k3s:commit
 
