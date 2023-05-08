@@ -1,12 +1,11 @@
 # build stage
 FROM  docker.io/node:18 AS build
-ARG TARGET
 
 WORKDIR /root
 COPY . /root
 
 RUN yarn install
-RUN yarn build:$TARGET
+RUN yarn build
 # RUN yarn deploy:k3s:commit
 
 # final stage
