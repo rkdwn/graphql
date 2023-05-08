@@ -19,15 +19,13 @@ jobs:
           ref: ${{ inputs.branch }}
           submodules: "recursive"
       
-      - name: Build
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
+      - name: Docker Build and Push
+        uses: docker/build-push-action@v2
         with:
-          image: graphql
-          # tags: ${{ steps.lowercase.outputs.lowercase }}
+          context: .
+          file: ./docker/Dockerfile
           tags: latest
-          containerfiles: |
-            ./docker/Dockerfile
+          push: false
       
       - name: Push
         id: push-image
