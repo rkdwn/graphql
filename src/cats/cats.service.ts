@@ -22,6 +22,6 @@ export class CatsService extends BaseService<
     @Inject(CAT_FILTER)
     filter: BaseFilter<SearchCatInput>
   ) {
-    super(Cats, catModel, filter);
+    super(Cats, catModel, ["id"], filter);
   }
 }

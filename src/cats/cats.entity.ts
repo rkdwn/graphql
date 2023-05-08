@@ -1,3 +1,4 @@
+import { IndexKeyType, createIndex } from "@/common/base.entity";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
@@ -42,5 +43,7 @@ export class Cats {
 }
 
 export const CatsSchema = SchemaFactory.createForClass(Cats);
-
 CatsSchema.loadClass(Cats);
+
+const indexList: IndexKeyType[] = [{ index: [{ id: 1 }], unique: true }];
+createIndex(CatsSchema, indexList);
