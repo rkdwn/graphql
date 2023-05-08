@@ -26,7 +26,7 @@ jobs:
           image: graphql
           # tags: ${{ steps.lowercase.outputs.lowercase }}
           tags: latest
-          containerfiles: ./dockerfiles/Dockerfile
+          containerfiles: ./docker/Dockerfile
       
       - name: Push
         id: push-image
