@@ -1,0 +1,41 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch name to create build image"
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: Portainer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.branch }}
+          submodules: "recursive"
+      
+      - name: Build
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: graphql
+          # tags: ${{ steps.lowercase.outputs.lowercase }}
+          tags: latest
+          containerfiles: .dockerfiles/Docerfile
+      
+      - name: Push
+        id: push-image
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ${{ secrets.DOCKERHUB_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    
