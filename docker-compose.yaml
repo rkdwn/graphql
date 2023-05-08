@@ -9,7 +9,7 @@ services:
       dockerfile: docker/Dockerfile
       network: host
       args:
-        - TARGET=develop
+        - TARGET:develop
   deployment:
     image: registry.23alice.duckdns.org/graphql:latest
     build:
@@ -17,4 +17,4 @@ services:
       dockerfile: docker/Dockerfile
       network: host
       args:
-        - TARGET=deployment
+        - TARGET:deployment
