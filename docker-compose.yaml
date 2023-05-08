@@ -1,10 +1,20 @@
 version: "3.4"
 
 services:
-  graphql:
+  develop:
     # personal docker registry, you need to docker-login to access.
     image: registry.23alice.duckdns.org/graphql:latest
     build:
       context: ./
       dockerfile: docker/Dockerfile
       network: host
+      args:
+        - TARGET=develop
+  deployment:
+    image: registry.23alice.duckdns.org/graphql:latest
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+      network: host
+      args:
+        - TARGET=deployment
