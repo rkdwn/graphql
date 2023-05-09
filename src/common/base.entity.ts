@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Schema } from "@nestjs/mongoose";
+import { Prop, Schema } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 
 export type IndexKeyType = {
@@ -11,9 +11,11 @@ export type IndexKeyType = {
 @Schema()
 export class BaseEntity {
   @Field(() => Date)
+  @Prop()
   createdAt: Date;
 
   @Field(() => Date, { nullable: true })
+  @Prop()
   updatedAt?: Date;
 
   constructor() {

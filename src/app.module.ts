@@ -9,10 +9,12 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriverConfig } from "@nestjs/apollo";
 import { graphqlConfig } from "./configs/graphql.config";
 import { APP_PIPE } from "@nestjs/core";
+import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
     CatModule,
+    UserModule,
     ConfigModule.forRoot({
       isGlobal: true
     }),

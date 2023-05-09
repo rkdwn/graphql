@@ -15,7 +15,7 @@ export const graphqlConfig: GqlModuleAsyncOptions<
       installSubscriptionHandlers: true,
       debug: true,
       playground: false, // @nestjs/apollo default playground
-      introspection: nestConfigService.get("NODE_ENV") === "development",
+      introspection: true,
       autoSchemaFile: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()]
     };

@@ -1,13 +1,13 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { Cats, CatsDocument } from "./cats.entity";
-import { BaseService } from "@/common/base.service";
-import { Model } from "mongoose";
-import { InjectModel } from "@nestjs/mongoose";
-import { UpdateCatInput } from "./dto/update-cat.dto";
-import { DeleteCatInput } from "./dto/delete-cat.dto";
 import { BaseFilter } from "@/common/base.filter";
-import { SearchCatInput } from "./dto/search-cat.dto";
+import { BaseService } from "@/common/base.service";
+import { Inject, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Cats, CatsDocument } from "./cats.entity";
 import { CAT_FILTER } from "./cats.filter";
+import { DeleteCatInput } from "./dto/delete-cat.dto";
+import { SearchCatInput } from "./dto/search-cat.dto";
+import { UpdateCatInput } from "./dto/update-cat.dto";
 
 @Injectable()
 export class CatsService extends BaseService<
