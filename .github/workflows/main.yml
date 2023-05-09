@@ -58,4 +58,4 @@ jobs:
           # portainer server url
           serverurl: portainer.23alice.duckdns.org
           # portainer account access token
-          username: ${{ secrets.PORTAINER_TOKEN }}
+          access_token: ${{ secrets.PORTAINER_TOKEN }}
