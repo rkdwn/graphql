@@ -12,5 +12,6 @@ FROM  docker.io/node:18
 
 WORKDIR /opt/graphql
 COPY --from=build /root/build /opt/graphql
+COPY --from=build /root/.env /opt/graphql/.env
 
 CMD ["node", "main.js"]
