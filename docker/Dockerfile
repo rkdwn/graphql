@@ -18,7 +18,7 @@ ENV NODE_ENV=production
 WORKDIR /build
 COPY --from=base /base/node_modules ./node_modules
 COPY . .
-RUN yarn build
+RUN yarn build && yarn cache clean
 
 # STAGE 3: app
 FROM base AS app
