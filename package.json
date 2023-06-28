@@ -10,7 +10,7 @@
     "prebuild": "rimraf build",
     "build:compile": "nest build",
     "build:module": "cp -r node_modules build",
-    "build": "run-s build:compile build:module",
+    "build": "run-s config:deploy build:compile build:module",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:local": "run-s config:local start:dev",
     "start": "nest start",
