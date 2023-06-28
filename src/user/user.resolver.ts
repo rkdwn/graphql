@@ -1,11 +1,11 @@
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { UserService } from "./user.service";
-import { User, UserDocument } from "./user.entity";
-import { DeleteUserInput } from "./dto/delete-user.input";
 import { Injectable } from "@nestjs/common";
-import { SearchUserInput } from "./dto/search-user.input";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { CreateUserInput } from "./dto/create-user.input";
+import { DeleteUserInput } from "./dto/delete-user.input";
+import { SearchUserInput } from "./dto/search-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
+import { User, UserDocument } from "./user.entity";
+import { UserService } from "./user.service";
 
 @Injectable()
 @Resolver(() => User)

@@ -4,6 +4,7 @@
   "author": "kj2693119@gmail.com",
   "license": "UNLICENSED",
   "scripts": {
+    "config:local": "cp -av envs/local.env .env",
     "config:develop": "cp -av envs/develop.env .env",
     "config:deploy": "cp -av envs/deploy.env .env",
     "prebuild": "rimraf build",
@@ -11,7 +12,7 @@
     "build:module": "cp -r node_modules build",
     "build": "run-s build:compile build:module",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start:local": "run-s config:develop start:dev",
+    "start:local": "run-s config:local start:dev",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
