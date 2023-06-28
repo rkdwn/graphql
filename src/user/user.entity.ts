@@ -61,6 +61,9 @@ export class User extends BaseEntity {
   @Prop()
   loginPassword: string;
 
+  @Field(() => String, { description: "user password salt" })
+  loginPasswordSalt: string;
+
   @Field(() => Int, { description: "user login fail count", nullable: true })
   @Prop()
   loginFailCount: number;
