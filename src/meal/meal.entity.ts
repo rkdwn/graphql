@@ -11,6 +11,7 @@ export type MealDocument = Meal & Document;
 export class Meal extends BaseEntity {
   constructor({
     id,
+    name,
     email,
     loginId,
     loginPassword,
@@ -18,6 +19,7 @@ export class Meal extends BaseEntity {
     wantToReserve
   }: {
     id: string;
+    name: string;
     email?: string;
     loginId: string;
     loginPassword: string;
@@ -26,6 +28,7 @@ export class Meal extends BaseEntity {
   }) {
     super();
     this.id = id;
+    this.name = name;
     this.email = email;
     this.loginId = loginId;
     this.loginPassword = loginPassword;
@@ -35,6 +38,10 @@ export class Meal extends BaseEntity {
   @Field(() => String, { description: "id value" })
   @Prop({ required: true })
   id: string;
+
+  @Field(() => String, { description: "user's name" })
+  @Prop({ required: true })
+  name: string;
 
   @Field(() => String, { description: "user email", nullable: true })
   @Prop()
@@ -64,6 +71,6 @@ MealSchema.loadClass(Meal);
 
 const indexList: IndexKeyType[] = [
   { index: [{ id: 1 }], unique: true },
-  { index: [{ loginId: 1 }], unique: true }
+  { index: [{ name: 1 }], unique: true }
 ];
 createIndex(MealSchema, indexList);

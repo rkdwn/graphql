@@ -11,6 +11,7 @@ export class MealFilter extends BaseFilter<SearchMealInput> {
     const _conditions: Record<string, any> = {};
 
     _conditions.mealType = args.mealType;
+    _conditions.name = args.name;
     _conditions.loginId = args.loginId;
     _conditions.wantToReserve = args.wantToReserve;
     _conditions.createdAt = this.toDateRange(args.createdAt);

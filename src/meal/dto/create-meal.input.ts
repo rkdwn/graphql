@@ -7,6 +7,9 @@ import { v4 } from "uuid";
 @InputType()
 export class CreateMealInput implements ICreateDto<Meal> {
   @Field(() => String, { nullable: true })
+  name: string;
+
+  @Field(() => String, { nullable: true })
   email: string;
 
   @Field(() => String)
