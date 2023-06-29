@@ -17,6 +17,7 @@ export const graphqlConfig: GqlModuleAsyncOptions<
       playground: false, // @nestjs/apollo default playground
       introspection: true,
       autoSchemaFile: true,
+      allowBatchedHttpRequests: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()]
     };
   }
