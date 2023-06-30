@@ -103,11 +103,7 @@ export class TaskService {
   }
 
   // 주중 아침 7시 30분에 실행
-  // @Cron("0 30 7 * * 1-5", {
-  //   name: "autoMeal",
-  //   timeZone: "Asia/Seoul"
-  // })
-  @Cron("0/10 * * * * *", {
+  @Cron("0 30 7 * * 1-5", {
     name: "autoMeal",
     timeZone: "Asia/Seoul"
   })
