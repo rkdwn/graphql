@@ -11,9 +11,11 @@ import { graphqlConfig } from "./configs/graphql.config";
 import { APP_PIPE } from "@nestjs/core";
 import { UserModule } from "./user/user.module";
 import { MealModule } from "./meal/meal.module";
+import { TaskModule } from "./tasks/task.module";
 
 @Module({
   imports: [
+    TaskModule,
     CatModule,
     UserModule,
     MealModule,
