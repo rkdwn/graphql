@@ -50,8 +50,10 @@ export class TaskService {
     await username.type(loginId);
     await password.type(loginPassword);
 
-    await page.click("button[type='submit']");
+    this.logger.debug(`로그인 시도, ${loginId}, ${loginPassword}`);
 
+    const loginBtn = await page.waitForSelector("button[type='submit']");
+    await loginBtn.evaluate(el => el.click());
     try {
       await page.waitForSelector("div > .panel-footer", {
         timeout: 1000
@@ -59,6 +61,7 @@ export class TaskService {
     } catch (err) {
       const panelBody = await page.waitForSelector("div > .panel-body");
       const _panelText = await panelBody.evaluate(el => el.textContent);
+
       if (_panelText.includes("없습니다")) {
         this.logger.error(`예약 불가능 상황, ${loginId}, ${loginPassword}`);
         browser.close();
@@ -69,48 +72,56 @@ export class TaskService {
       browser.close();
       return;
     }
-    const buttonList = await page.$$("div > .panel-footer > button");
 
-    for (let i = 0; i < buttonList.length; i++) {
-      const buttonText = await buttonList[i].evaluate(el => el.textContent);
-      if (mealType === "A") {
-        if (buttonText.includes("A")) {
-          await page.click("button[data-course-code='A']");
-          break;
-        }
-      }
-      if (mealType === "B") {
-        if (buttonText.split(":")[1] === "0") {
-          // 재고 없음
-          this.logger.error("재고없음!!");
-          return;
-        }
-        await page.click("button[data-course-code='B']");
-        break;
-      }
-      if (mealType === "C") {
-        if (buttonText.split(":")[1] === "0") {
-          // 재고 없음
-          this.logger.error("재고없음!!");
-          return;
-        }
-        await page.click("button[data-course-code='C']");
-        break;
-      }
+    if (mealType === "A") {
+      this.logger.debug("A코스 예약 시도");
+      const _mealA = await page.waitForSelector("button[data-course-code='A']");
+
+      await _mealA.evaluate(el => el.click());
     }
+    if (mealType === "B") {
+      this.logger.debug("B코스 예약 시도");
+      const _mealB = await page.waitForSelector("button[data-course-code='B']");
+
+      // const _text = await page.evaluate(() => {
+      //   const element = document.querySelector(
+      //     "button[data-course-code='B'] span.badge"
+      //   );
+      //   return element.textContent;
+      // });
+
+      // this.logger.debug(`span 확인 ${_text}`);
+
+      await _mealB.evaluate(el => el.click());
+    }
+
+    if (mealType === "C") {
+      this.logger.debug("C코스 예약 시도");
+      const _mealC = await page.waitForSelector("button[data-course-code='C']");
+
+      await _mealC.evaluate(el => el.click());
+    }
+
+    this.logger.debug("확인버튼 클릭");
     // 확인 모달 창 처리
     await page.waitForSelector(".bootstrap-dialog-footer-buttons");
     const confirmButtonList = await page.$$(
       ".bootstrap-dialog-footer-buttons > button"
     );
 
-    confirmButtonList.map(button => {
-      button.evaluate(el => {
-        if (el.textContent === "확인") {
-          el.click();
-        }
-      });
-    });
+    for (let i = 0; i < confirmButtonList.length; i++) {
+      const buttonText = await page.evaluate(
+        el => el.innerText,
+        confirmButtonList[i]
+      );
+      this.logger.debug(`버튼 텍스트 ${buttonText}`);
+      if (buttonText === "확인") {
+        await confirmButtonList[i].evaluate(el => el.click());
+        break;
+      }
+    }
+    // 에러인지 성공인지 Dialog 창으로 확인해야하는데 실패함
+
     await browser.close();
   }
 
