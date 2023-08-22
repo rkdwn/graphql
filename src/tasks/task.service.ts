@@ -133,9 +133,11 @@ export class TaskService {
     }
 
     // 에러인지 성공인지 확인
-    await page.reload();
+    await page.evaluate(() => {
+      location.reload();
+    });
 
-    await page.waitForNavigation({ waitUntil: "networkidle0", timeout: 60000 });
+    await page.waitForNavigation({ waitUntil: "networkidle0", timeout: 90000 });
 
     await page.waitForSelector("div > .panel-footer");
     const resultButtonList = await page.$$(".panel-footer > button");
