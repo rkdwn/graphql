@@ -182,10 +182,22 @@ export class TaskService {
       const meal = meals[i];
       const { name, loginId, loginPassword, mealType, wantToReserve } = meal;
       try {
-        this.run({ name, loginId, loginPassword, mealType, wantToReserve });
+        await this.run({
+          name,
+          loginId,
+          loginPassword,
+          mealType,
+          wantToReserve
+        });
       } catch (e) {
         // one more time~
-        this.run({ name, loginId, loginPassword, mealType, wantToReserve });
+        await this.run({
+          name,
+          loginId,
+          loginPassword,
+          mealType,
+          wantToReserve
+        });
       }
     }
   }
