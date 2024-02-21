@@ -1,44 +1,37 @@
 # STAGE 1: install
 FROM docker.io/node:lts-alpine AS base
 
-WORKDIR /base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 
-RUN apk update
-RUN apk upgrade
+COPY . /app
+WORKDIR /app
 
-RUN apk add --no-cache udev ttf-freefont chromium
+ENV PUPPETEER_SKIP_DOWNLOAD true
+RUN apk add udev ttf-freefont chromium
 
-RUN apk --no-cache add tzdata && \
-  cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-  echo "Asia/Seoul" > /etc/timezone
-
+# RUN apk add tzdata && \
+#   cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+#   echo "Asia/Seoul" > /etc/timezone
 
 # Install dependencies
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 # STAGE 2: build
 FROM base AS build
-ENV NODE_ENV=production
-WORKDIR /build
-COPY --from=base /base/node_modules ./node_modules
-COPY . .
-RUN yarn build && yarn cache clean
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
+
 
 # STAGE 3: app
-FROM base AS app
-WORKDIR /app
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/build /app/build
+COPY --from=build /app/.env /app/.env
 
-ENV NODE_ENV=production
+# RUN npx puppeteer browsers install chrome
 
-COPY --from=build /build/build ./
-COPY --from=build /build/node_modules ./node_modules
-COPY --from=build /build/.env ./.env
-
-CMD ["node", "main.js"]
+CMD [ "node", "build/main" ]

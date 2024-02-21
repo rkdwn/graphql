@@ -23,18 +23,12 @@ export class TaskService {
   ) {}
   private readonly logger = new Logger(TaskService.name);
 
-  private delay(time: number) {
-    return new Promise(function (resolve) {
-      setTimeout(resolve, time);
-    });
-  }
-
   private async run(props: ReserveDataType) {
     const { name, loginId, loginPassword, mealType, wantToReserve } = props;
     if (!wantToReserve) return;
 
     const browser = await puppeteer.launch({
-      headless: "new",
+      headless: true,
       executablePath:
         this.configService.get("NODE_ENV") === "development"
           ? null

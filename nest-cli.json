@@ -1,4 +1,11 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "webpack": false,
+    "deleteOutputPath": true,
+    "assets": ["**/*.ejs", "static/**/*"],
+    "watchAssets": true,
+    "typeCheck": true
+  }
 }
