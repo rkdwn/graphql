@@ -13,8 +13,6 @@ export class StorageService {
       accessKey: this.configService.get("MINIO_ACCESSKEY"),
       secretKey: this.configService.get("MINIO_SECRETKEY")
     });
-
-    console.log("hhhhhhh >>> ", this.minioClient);
   }
 
   public async getObject(bucketName: string, objectName: string) {
