@@ -4,6 +4,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { TaskService } from "./task.service";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ConfigModule } from "@nestjs/config";
+import { StorageModule } from "@/common/storage/storage.module";
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { ConfigModule } from "@nestjs/config";
       { name: Meal.name, schema: MealSchema, collection: Meal.name }
     ]),
     ScheduleModule.forRoot(),
-    ConfigModule
+    ConfigModule,
+    StorageModule
   ],
   providers: [TaskService]
 })

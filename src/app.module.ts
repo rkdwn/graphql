@@ -12,17 +12,19 @@ import { APP_PIPE } from "@nestjs/core";
 import { UserModule } from "./user/user.module";
 import { MealModule } from "./meal/meal.module";
 import { TaskModule } from "./tasks/task.module";
+import { StorageModule } from "./common/storage/storage.module";
 
 @Module({
   imports: [
-    TaskModule,
-    CatModule,
-    UserModule,
-    MealModule,
     ConfigModule.forRoot({
       isGlobal: true
     }),
     MongooseModule.forRootAsync(mongooseConfig),
+    StorageModule,
+    TaskModule,
+    CatModule,
+    UserModule,
+    MealModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>(graphqlConfig)
   ],
   controllers: [AppController],

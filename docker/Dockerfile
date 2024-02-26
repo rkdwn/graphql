@@ -5,16 +5,11 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-
 COPY . /app
 WORKDIR /app
 
 ENV PUPPETEER_SKIP_DOWNLOAD true
 RUN apk add udev ttf-freefont chromium
-
-# RUN apk add tzdata && \
-#   cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-#   echo "Asia/Seoul" > /etc/timezone
 
 # Install dependencies
 FROM base AS prod-deps
