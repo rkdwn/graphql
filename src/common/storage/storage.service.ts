@@ -19,6 +19,22 @@ export class StorageService {
     return this.minioClient.getObject(bucketName, objectName);
   }
 
+  public async putObject(
+    bucketName: string,
+    objectName: string,
+    filePath: string
+  ) {
+    const exist = await this.bucketExist(bucketName);
+    if (!exist) {
+      const result = await this.makeBucket(bucketName);
+      if (!result) {
+        return new Error("CREATE_BUCKET_FAILED");
+      }
+    }
+
+    return this.minioClient.fPutObject(bucketName, objectName, filePath);
+  }
+
   public async listBucket() {
     try {
       const result = await this.minioClient.listBuckets();
@@ -26,5 +42,37 @@ export class StorageService {
     } catch (e) {
       console.error("why..?", e);
     }
+  }
+  public async bucketExist(bucket: string): Promise<Boolean> {
+    console.info(`[BUCKET_SERVICE] (bucketExist) called`);
+    return new Promise((resolve, reject) => {
+      this.minioClient.bucketExists(bucket, (err, exist) => {
+        if (err) {
+          console.error(
+            `[BUCKET_SERVICE] (getBucket) : ${JSON.stringify(err)}}`
+          );
+          reject(null);
+        }
+        if (exist) {
+          return resolve(true);
+        } else {
+          return resolve(false);
+        }
+      });
+    });
+  }
+  public async makeBucket(bucket: string): Promise<boolean> {
+    console.info(`[BUCKET_SERVICE] (createBucket) called`);
+    return new Promise((resolve, reject) => {
+      this.minioClient.makeBucket(bucket, err => {
+        if (err) {
+          console.error(
+            `[BUCKET_SERVICE] (getBucket) : ${JSON.stringify(err)}}`
+          );
+          resolve(false);
+        }
+        resolve(true);
+      });
+    });
   }
 }

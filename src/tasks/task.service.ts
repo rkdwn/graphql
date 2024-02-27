@@ -1,4 +1,5 @@
 import { StorageService } from "@/common/storage/storage.service";
+import { FilesService } from "@/files/files.service";
 import { Meal, MealDocument } from "@/meal/meal.entity";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -22,11 +23,14 @@ export class TaskService {
     @InjectModel(Meal.name)
     private readonly mealModel: Model<MealDocument>,
     private readonly configService: ConfigService,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    private readonly filesService: FilesService
   ) {}
   private readonly logger = new Logger(TaskService.name);
 
   private async reserve(props: ReserveDataType) {
+    const PDF_PATH = path.join(__dirname, "..", "..", "./pdf");
+
     const { name, loginId, loginPassword, mealType, wantToReserve } = props;
     if (!wantToReserve) return;
 
@@ -160,27 +164,32 @@ export class TaskService {
       }
     }
 
+    // 결과 PDF 캡쳐 파일 생성
+    // await page.pdf({ format: "A4", path: `${PDF_PATH}/${loginId}.pdf` });
+    // console.log("make pdf done!");
+    // this.storageService.putObject(
+    //   "meal",
+    //   `${loginId}.pdf`,
+    //   `${PDF_PATH}/${loginId}.pdf`
+    // );
+
     await browser.close();
   }
 
-  @Cron("*/10 * * * * *", {
-    name: "captureTest",
-    timeZone: "Asia/Seoul"
-  })
+  // @Cron("*/10 * * * * *", {
+  //   name: "captureTest",
+  //   timeZone: "Asia/Seoul"
+  // })
   async minioTest() {
-    const buckets = await this.storageService.listBucket();
-    console.log("..?", buckets);
+    this.captureTest();
   }
 
   async captureTest() {
     console.log("captureTest!");
     const loginId = "v13205";
     const loginPassword = "v13205";
-    const name = "test";
-    const PDF_PATH =
-      this.configService.get("NODE_ENV") === "development"
-        ? path.join(__dirname, "..", "..", "public")
-        : `/mnt/data/v13205.pdf`;
+
+    const PDF_PATH = path.join(__dirname, "..", "..", "./pdf");
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -213,26 +222,14 @@ export class TaskService {
 
     await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-    try {
-      await page.waitForSelector("div > .panel-footer", {
-        timeout: 1000
-      });
-    } catch (err) {
-      const panelBody = await page.waitForSelector("div > .panel-body");
-      const _panelText = await panelBody.evaluate(el => el.textContent);
-
-      if (_panelText.includes("없습니다")) {
-        this.logger.error(`${name}님 예약 불가능 상황, 재시도 합니다.`);
-        browser.close();
-        throw new Error("예약 불가능 상황");
-      }
-      // 로그인 실패한 경우도 여기 포함
-      this.logger.error(`${name}님 로그인 실패, 계정정보 ${loginId}`);
-      browser.close();
-      throw new Error("로그인 실패");
-    }
-
-    await page.pdf({ format: "A4", path: `${PDF_PATH}/test.pdf` });
+    await page.pdf({ format: "A4", path: `${PDF_PATH}/${loginId}.pdf` });
+    console.log("make pdf done!");
+    await this.storageService.putObject(
+      "meal",
+      `${loginId}.pdf`,
+      `${PDF_PATH}/${loginId}.pdf`
+    );
+    browser.close();
   }
 
   // 주중 아침 7시 30분에 실행
@@ -244,7 +241,7 @@ export class TaskService {
   //   name: "autoMeal",
   //   timeZone: "Asia/Seoul"
   // })
-  async handleCron() {
+  async cronReserve() {
     const meals = await this.mealModel.find({}).exec();
 
     for (let i = 0; i < meals.length; i++) {

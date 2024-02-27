@@ -5,6 +5,7 @@ import { TaskService } from "./task.service";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ConfigModule } from "@nestjs/config";
 import { StorageModule } from "@/common/storage/storage.module";
+import { FilesModule } from "@/files/files.module";
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { StorageModule } from "@/common/storage/storage.module";
     ]),
     ScheduleModule.forRoot(),
     ConfigModule,
-    StorageModule
+    StorageModule,
+    FilesModule
   ],
   providers: [TaskService]
 })
