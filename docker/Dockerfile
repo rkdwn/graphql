@@ -1,5 +1,5 @@
 # STAGE 1: install
-FROM docker.io/node:lts-alpine AS base
+FROM --platform=linux/amd64 docker.io/node:lts-alpine AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -19,7 +19,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
-
 
 # STAGE 3: app
 FROM base
