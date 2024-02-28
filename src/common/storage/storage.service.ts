@@ -9,7 +9,8 @@ export class StorageService {
     this.minioClient = new Minio.Client({
       endPoint: this.configService.get("MINIO_ENDPOINT"),
       port: parseInt(this.configService.get("MINIO_PORT"), 10),
-      useSSL: true,
+      useSSL:
+        this.configService.get("NODE_ENV") === "production" ? false : true,
       accessKey: this.configService.get("MINIO_ACCESSKEY"),
       secretKey: this.configService.get("MINIO_SECRETKEY")
     });
@@ -49,7 +50,7 @@ export class StorageService {
       this.minioClient.bucketExists(bucket, (err, exist) => {
         if (err) {
           console.error(
-            `[BUCKET_SERVICE] (getBucket) : ${JSON.stringify(err)}}`
+            `[BUCKET_SERVICE] (bucketExist) : ${JSON.stringify(err)}}`
           );
           reject(null);
         }
@@ -67,7 +68,7 @@ export class StorageService {
       this.minioClient.makeBucket(bucket, err => {
         if (err) {
           console.error(
-            `[BUCKET_SERVICE] (getBucket) : ${JSON.stringify(err)}}`
+            `[BUCKET_SERVICE] (createBucket) : ${JSON.stringify(err)}}`
           );
           resolve(false);
         }

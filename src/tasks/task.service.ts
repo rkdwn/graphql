@@ -176,10 +176,10 @@ export class TaskService {
     await browser.close();
   }
 
-  // @Cron("*/10 * * * * *", {
-  //   name: "captureTest",
-  //   timeZone: "Asia/Seoul"
-  // })
+  @Cron("*/10 * * * * *", {
+    name: "captureTest",
+    timeZone: "Asia/Seoul"
+  })
   async minioTest() {
     this.captureTest();
   }
@@ -229,7 +229,7 @@ export class TaskService {
       `${loginId}.pdf`,
       `${PDF_PATH}/${loginId}.pdf`
     );
-    browser.close();
+    await browser.close();
   }
 
   // 주중 아침 7시 30분에 실행
