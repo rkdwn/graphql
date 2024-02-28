@@ -2,6 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as Minio from "minio";
 
+type StatObject = {
+  size: number;
+  etag: string;
+  metaData: Object;
+  lastModified: Date;
+};
+
 @Injectable()
 export class StorageService {
   private minioClient: Minio.Client;
@@ -17,7 +24,11 @@ export class StorageService {
   }
 
   public async getObject(bucketName: string, objectName: string) {
-    return this.minioClient.getObject(bucketName, objectName);
+    const exist = await this.statObject(bucketName, objectName);
+    if (exist) {
+      return this.minioClient.getObject(bucketName, objectName);
+    }
+    throw new Error("OBJECT_NOT_FOUND");
   }
 
   public async putObject(
@@ -75,5 +86,15 @@ export class StorageService {
         resolve(true);
       });
     });
+  }
+  public async statObject(
+    bucket: string,
+    objectName: string
+  ): Promise<StatObject> {
+    const _result = await this.minioClient.statObject(bucket, objectName);
+    if (_result) {
+      return _result;
+    }
+    return null;
   }
 }

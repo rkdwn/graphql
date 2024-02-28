@@ -168,7 +168,7 @@ export class TaskService {
     await page.pdf({ format: "A4", path: `${PDF_PATH}/${loginId}.pdf` });
     this.logger.debug("결과 PDF 저장 완료");
     this.storageService.putObject(
-      "meal",
+      "meals",
       `${loginId}.pdf`,
       `${PDF_PATH}/${loginId}.pdf`
     );

@@ -1,12 +1,12 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Param } from "@nestjs/common";
 import { FilesService } from "./files.service";
 
-@Controller()
+@Controller("/files")
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Get("/:loginId")
-  async getPDF(loginId: string) {
+  async getPDF(@Param("loginId") loginId: string) {
     return await this.filesService.getPDF(loginId);
   }
 }

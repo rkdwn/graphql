@@ -6,7 +6,7 @@ import { NextFunction, Request, Response } from "express";
 export class TestController {
   constructor(private readonly storageService: StorageService) {}
 
-  @Get()
+  @Get("/")
   async getConfigFile(req: Request, res: Response, next: NextFunction) {
     const resultStream = await this.storageService.getObject(
       "config",
