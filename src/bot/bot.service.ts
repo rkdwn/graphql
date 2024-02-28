@@ -1,3 +1,4 @@
+import { StorageService } from "@/common/storage/storage.service";
 import { Meal, MealDocument } from "@/meal/meal.entity";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
@@ -7,7 +8,8 @@ import { Model } from "mongoose";
 export class BotService {
   constructor(
     @InjectModel(Meal.name)
-    private readonly mealModel: Model<MealDocument>
+    private readonly mealModel: Model<MealDocument>,
+    private readonly storageService: StorageService
   ) {}
   public async getHello() {
     return "hello~";
@@ -27,5 +29,13 @@ export class BotService {
       { new: true }
     );
     return result;
+  }
+
+  public async getReserveResult(userId: string) {
+    const resultStream = await this.storageService.getObject(
+      "meals",
+      `${userId}.pdf`
+    );
+    return resultStream;
   }
 }

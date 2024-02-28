@@ -22,9 +22,14 @@ export class BotController {
           outputs: [
             {
               textCard: {
-                title: "어떤 계정의 예약 현황을 보고 싶으신가요?",
-                description:
-                  "로그인ID 정보를 보내주세요.\n보내주신 정보로 조회합니다."
+                title: "등록된 계정 정보가 없군요!",
+                buttons: [
+                  {
+                    label: "등록 해 주세요",
+                    action: "message",
+                    messageText: "등록 해 주세요"
+                  }
+                ]
               }
             }
           ]
@@ -33,6 +38,9 @@ export class BotController {
       res.header("Content-Type", "application/json");
       return res.status(200).send(responseBody);
     }
+
+    const resultStream = await this.botService.getReserveResult(meal.loginId);
+    // TODO: 파일을 전송하는 방법을 찾아야 함
     const responseBody = {
       version: "2.0",
       template: {
