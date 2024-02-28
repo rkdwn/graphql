@@ -1,11 +1,10 @@
+import { StorageModule } from "@/common/storage/storage.module";
 import { Meal, MealSchema } from "@/meal/meal.entity";
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
-import { TaskService } from "./task.service";
-import { ScheduleModule } from "@nestjs/schedule";
 import { ConfigModule } from "@nestjs/config";
-import { StorageModule } from "@/common/storage/storage.module";
-import { FilesModule } from "@/files/files.module";
+import { MongooseModule } from "@nestjs/mongoose";
+import { ScheduleModule } from "@nestjs/schedule";
+import { TaskService } from "./task.service";
 
 @Module({
   imports: [
@@ -14,8 +13,7 @@ import { FilesModule } from "@/files/files.module";
     ]),
     ScheduleModule.forRoot(),
     ConfigModule,
-    StorageModule,
-    FilesModule
+    StorageModule
   ],
   providers: [TaskService]
 })
