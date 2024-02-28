@@ -14,6 +14,7 @@ export class Meal extends BaseEntity {
     name,
     email,
     loginId,
+    botUserId,
     loginPassword,
     mealType,
     wantToReserve
@@ -22,6 +23,7 @@ export class Meal extends BaseEntity {
     name: string;
     email?: string;
     loginId: string;
+    botUserId?: string;
     loginPassword: string;
     mealType: TypeMealType;
     wantToReserve: boolean;
@@ -30,6 +32,7 @@ export class Meal extends BaseEntity {
     this.id = id;
     this.name = name;
     this.email = email;
+    this.botUserId = botUserId;
     this.loginId = loginId;
     this.loginPassword = loginPassword;
     this.mealType = mealType;
@@ -46,6 +49,13 @@ export class Meal extends BaseEntity {
   @Field(() => String, { description: "user email", nullable: true })
   @Prop()
   email: string;
+
+  @Field(() => String, {
+    description: "kakao talk bot user id",
+    nullable: true
+  })
+  @Prop()
+  botUserId: string;
 
   @Field(() => String, { description: "user loginId" })
   @Prop({ required: true })

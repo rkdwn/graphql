@@ -15,6 +15,7 @@ import { TaskModule } from "./tasks/task.module";
 import { StorageModule } from "./common/storage/storage.module";
 import { TestModule } from "./test/test.module";
 import { FilesModule } from "./files/files.module";
+import { BotModule } from "./bot/bot.module";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { FilesModule } from "./files/files.module";
     MealModule,
     FilesModule,
     TestModule,
+    BotModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>(graphqlConfig)
   ],
   controllers: [AppController],
