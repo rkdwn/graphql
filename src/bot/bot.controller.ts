@@ -84,10 +84,13 @@ export class BotController {
   async regitUserId(@Request() req: Req, @Response() res: Res) {
     const request = req.body;
     const botUserId = request.userRequest.user.id;
-    const loginId = request.action.params.userId;
+    const loginId: string = request.action.params.userId;
 
     let responseBody = {};
-    const result = await this.botService.registUserId(loginId, botUserId);
+    const result = await this.botService.registUserId(
+      loginId.toLowerCase(),
+      botUserId
+    );
 
     if (result) {
       responseBody = {
@@ -150,6 +153,7 @@ export class BotController {
     let responseBody = {};
     const result = await this.botService.checkBotUserId(botUserId);
 
+    console.log(`초기화 진행합니다. ${result.loginId}`);
     if (result) {
       const resetResult = await this.botService.resetUser(botUserId);
       if (resetResult) {
