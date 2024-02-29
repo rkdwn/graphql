@@ -46,8 +46,8 @@ export class BotController {
     }
 
     if (meal.loginId) {
-      const bucketUrl = `https://${this.configService.get(
-        "MINIO_ENDPOINT"
+      const bucketUrl = `https://minio.${this.configService.get(
+        "HOST_URL"
       )}/meals/${meal.loginId}.pdf`;
       // TODO: 파일을 전송하는 방법을 찾아야 함
       responseBody = {
@@ -59,8 +59,8 @@ export class BotController {
                 title: `반가워요, ${meal.name} 님!`,
                 description: `예약 현황은 아래 버튼을 눌러 확인해 주세요`,
                 thumbnail: {
-                  imagUrl: `https://${this.configService.get(
-                    "MINIO_ENDPOINT"
+                  imagUrl: `https://minio.${this.configService.get(
+                    "HOST_URL"
                   )}/meals/vatech.png`
                 },
                 buttons: [
@@ -102,7 +102,7 @@ export class BotController {
                   {
                     label: "예약 현황 보기",
                     action: "message",
-                    messageText: "예약 현황 보기"
+                    messageText: "예약 확인"
                   }
                 ]
               }
