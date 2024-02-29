@@ -1,6 +1,13 @@
 import { StorageService } from "@/common/storage/storage.service";
-import { Controller, Get, Inject, StreamableFile } from "@nestjs/common";
-import { NextFunction, Request, Response } from "express";
+import {
+  Controller,
+  Get,
+  Inject,
+  Request,
+  Response,
+  StreamableFile
+} from "@nestjs/common";
+import { NextFunction, Request as Req, Response as Res } from "express";
 import { TestService } from "./test.service";
 
 @Controller("/test")
@@ -11,7 +18,11 @@ export class TestController {
   ) {}
 
   @Get("/")
-  async getConfigFile(req: Request, res: Response, next: NextFunction) {
+  async getConfigFile(
+    @Request() req: Req,
+    @Response() res: Response,
+    next: NextFunction
+  ) {
     const resultStream = await this.storageService.getObject(
       "config",
       "config"
@@ -20,8 +31,12 @@ export class TestController {
   }
 
   @Get("/pdf-test")
-  async generatePDF(req: Request, res: Response, next: NextFunction) {
+  async generatePDF(
+    @Request() req: Req,
+    @Response() res: Response,
+    next: NextFunction
+  ) {
     const result = await this.testService.captureTest();
-    return res.status(200).send(result);
+    return result;
   }
 }
