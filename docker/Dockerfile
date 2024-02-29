@@ -10,6 +10,11 @@ WORKDIR /app
 
 ENV PUPPETEER_SKIP_DOWNLOAD true
 RUN apk add udev ttf-freefont chromium
+# 한글 폰트 설치
+RUN mkdir /usr/share/fonts/nanumfont
+RUN wget http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip
+RUN unzip NanumFont_TTF_ALL.zip -d /usr/share/fonts/nanumfont && rm NanumFont_TTF_ALL.zip
+RUN fc-cache -f -v
 
 # Install dependencies
 FROM base AS prod-deps

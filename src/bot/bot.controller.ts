@@ -1,22 +1,28 @@
 import { All, Controller, Get, Post, Request, Response } from "@nestjs/common";
 import { Response as Res, Request as Req } from "express";
 import { BotService } from "./bot.service";
+import { ConfigService } from "@nestjs/config";
+import { MealDocument } from "@/meal/meal.entity";
 
 @Controller("/bot")
 export class BotController {
-  constructor(private readonly botService: BotService) {}
+  constructor(
+    private readonly botService: BotService,
+    private readonly configService: ConfigService
+  ) {}
 
   @Post("/")
   async getReserveResult(@Request() req: Req, @Response() res: Res) {
-    // console.log("...?", req);
     const response = req.body;
+
+    // 해당 정보는 사용자 별 고유한 값임
     const botUserId = response.userRequest.user.id;
 
-    console.log("what?", botUserId);
-    const meal = await this.botService.checkBotUserId(botUserId);
-
+    let responseBody = {};
+    const meal: MealDocument = await this.botService.checkBotUserId(botUserId);
+    // 새로운 카톡계정 일 경우
     if (!meal) {
-      const responseBody = {
+      responseBody = {
         version: "2.0",
         template: {
           outputs: [
@@ -39,21 +45,37 @@ export class BotController {
       return res.status(200).send(responseBody);
     }
 
-    const resultStream = await this.botService.getReserveResult(meal.loginId);
-    // TODO: 파일을 전송하는 방법을 찾아야 함
-    const responseBody = {
-      version: "2.0",
-      template: {
-        outputs: [
-          {
-            simpleText: {
-              text: "hello I'm Ryan"
+    if (meal.loginId) {
+      const bucketUrl = `https://${this.configService.get(
+        "MINIO_ENDPOINT"
+      )}/meals/${meal.loginId}.pdf`;
+      // TODO: 파일을 전송하는 방법을 찾아야 함
+      responseBody = {
+        version: "2.0",
+        template: {
+          outputs: [
+            {
+              basicCard: {
+                title: `반가워요, ${meal.name} 님!`,
+                description: `예약 현황은 아래 버튼을 눌러 확인해 주세요`,
+                thumbnail: {
+                  imagUrl: `https://${this.configService.get(
+                    "MINIO_ENDPOINT"
+                  )}/meals/vatech.png`
+                },
+                buttons: [
+                  {
+                    action: "webLink",
+                    label: "두구두구",
+                    webLinkUrl: bucketUrl
+                  }
+                ]
+              }
             }
-          }
-        ]
-      }
-    };
-
+          ]
+        }
+      };
+    }
     res.header("Content-Type", "application/json");
     return res.status(200).send(responseBody);
   }
@@ -63,11 +85,12 @@ export class BotController {
     const request = req.body;
     const botUserId = request.userRequest.user.id;
     const loginId = request.action.params.userId;
-    console.log("loginId", loginId, botUserId);
+
+    let responseBody = {};
     const result = await this.botService.registUserId(loginId, botUserId);
-    console.log("result >>>", result);
+
     if (result) {
-      const responseBody = {
+      responseBody = {
         version: "2.0",
         template: {
           outputs: [
@@ -78,8 +101,8 @@ export class BotController {
                 buttons: [
                   {
                     label: "예약 현황 보기",
-                    action: "block",
-                    blockId: ""
+                    action: "message",
+                    messageText: "예약 현황 보기"
                   }
                 ]
               }
@@ -87,29 +110,114 @@ export class BotController {
           ]
         }
       };
-      res.header("Content-Type", "application/json");
-      return res.status(200).send(responseBody);
-    }
-    const responseBody = {
-      version: "2.0",
-      template: {
-        outputs: [
-          {
-            textCard: {
-              title: "등록에 실패했어요!",
-              description: "다시 시도해 주세요",
-              buttons: [
-                {
-                  label: "계정 등록하기",
-                  action: "block",
-                  blockId: ""
-                }
-              ]
+    } else {
+      responseBody = {
+        version: "2.0",
+        template: {
+          outputs: [
+            {
+              textCard: {
+                title: "등록에 실패했어요!",
+                description:
+                  "입력한 사번으로 가입된 정보가 없는 것 같아요. 서비스 가입을 하지 않았다면 회원가입을 먼저 해주세요!",
+                buttons: [
+                  {
+                    label: "다시 등록하기",
+                    action: "message",
+                    messageText: "계정 등록하기"
+                  },
+                  {
+                    label: "회원가입 하기",
+                    action: "webLink",
+                    webLinkUrl: "https://dev.23alice.duckdns.org"
+                  }
+                ]
+              }
             }
+          ]
+        }
+      };
+    }
+    res.header("Content-Type", "application/json");
+    return res.status(200).send(responseBody);
+  }
+
+  @Post("/reset")
+  async resetAccount(@Request() req: Req, @Response() res: Res) {
+    const request = req.body;
+    const botUserId = request.userRequest.user.id;
+
+    let responseBody = {};
+    const result = await this.botService.checkBotUserId(botUserId);
+
+    if (result) {
+      const resetResult = await this.botService.resetUser(botUserId);
+      if (resetResult) {
+        responseBody = {
+          version: "2.0",
+          template: {
+            outputs: [
+              {
+                textCard: {
+                  title: "초기화 되었어요!",
+                  description: "계정을 다시 등록해 주세요",
+                  buttons: [
+                    {
+                      label: "계정 등록하기",
+                      action: "message",
+                      messageText: "계정 등록하기"
+                    }
+                  ]
+                }
+              }
+            ]
           }
-        ]
+        };
+      } else {
+        responseBody = {
+          version: "2.0",
+          template: {
+            outputs: [
+              {
+                textCard: {
+                  title: "초기화에 실패했어요!",
+                  description: "뭔가 문제가 생겼어요ㅠㅠ 다시 시도 해 주세요",
+                  buttons: [
+                    {
+                      label: "다시 시도하기",
+                      action: "message",
+                      messageText: "초기화"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        };
       }
-    };
+    } else {
+      responseBody = {
+        version: "2.0",
+        template: {
+          outputs: [
+            {
+              textCard: {
+                title: "초기화에 실패했어요!",
+                description:
+                  "등록 된 계정 정보가 없는 것 같아요! 계정 등록을 진행 해 주세요!",
+                buttons: [
+                  {
+                    label: "계정 등록하기",
+                    action: "message",
+                    messageText: "계정 등록하기"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      };
+    }
     res.header("Content-Type", "application/json");
     return res.status(200).send(responseBody);
   }

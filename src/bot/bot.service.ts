@@ -31,6 +31,15 @@ export class BotService {
     return result;
   }
 
+  public async resetUser(botUserId: string) {
+    const result = await this.mealModel.updateMany(
+      { botUserId: botUserId },
+      { botUserId: null },
+      { new: true }
+    );
+    return result;
+  }
+
   public async getReserveResult(userId: string) {
     const resultStream = await this.storageService.getObject(
       "meals",
