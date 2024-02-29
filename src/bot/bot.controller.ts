@@ -153,8 +153,8 @@ export class BotController {
     let responseBody = {};
     const result = await this.botService.checkBotUserId(botUserId);
 
-    console.log(`초기화 진행합니다. ${result.loginId}`);
     if (result) {
+      console.log(`초기화 진행합니다. ${result.loginId}`);
       const resetResult = await this.botService.resetUser(botUserId);
       if (resetResult) {
         responseBody = {
