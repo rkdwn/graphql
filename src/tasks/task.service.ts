@@ -189,8 +189,8 @@ export class TaskService {
    * await 로 reserve 함수 하나씩 실행시키니 DB 순서가 뒤쳐질 경우 예약이 제대로 안되는 경우가 있었다.
    * 한번에 실행하도록 수정한다.
    */
-  @Cron("*/10 * * * * *", {
-    name: "captureTest",
+  @Cron("59 29 7 * * 1-5", {
+    name: "autoMeal",
     timeZone: "Asia/Seoul"
   })
   async cronReserve() {
@@ -215,6 +215,7 @@ export class TaskService {
     const retryList = result
       .filter(r => !!r)
       .map(meal => {
+        this.logger.debug(`예약 실패로 ${meal.name}님 재시도 진행합니다.`);
         return this.reserve(meal);
       });
 
