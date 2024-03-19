@@ -3,7 +3,6 @@ import { Meal, MealDocument } from "@/meal/meal.entity";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
-import { Cron } from "@nestjs/schedule";
 import { Model } from "mongoose";
 import path from "path";
 import puppeteer from "puppeteer";

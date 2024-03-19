@@ -76,12 +76,14 @@ export class TaskService {
       if (_panelText.includes("없습니다")) {
         this.logger.error(`${name}님 예약 불가능 상황, 재시도 합니다.`);
         browser.close();
-        throw new Error("예약 불가능 상황");
+        return props;
       }
       // 로그인 실패한 경우도 여기 포함
-      this.logger.error(`${name}님 로그인 실패, 계정정보 ${loginId}`);
+      this.logger.error(
+        `${name}님 로그인 실패, 계정정보 ${loginId} ${loginPassword}, 재시도 합니다.`
+      );
       browser.close();
-      throw new Error("로그인 실패");
+      return props;
     }
 
     if (mealType === "A") {
@@ -187,34 +189,35 @@ export class TaskService {
    * await 로 reserve 함수 하나씩 실행시키니 DB 순서가 뒤쳐질 경우 예약이 제대로 안되는 경우가 있었다.
    * 한번에 실행하도록 수정한다.
    */
-  @Cron("59 29 7 * * 1-5", {
-    name: "autoMeal",
+  @Cron("*/10 * * * * *", {
+    name: "captureTest",
     timeZone: "Asia/Seoul"
   })
   async cronReserve() {
     const meals = await this.mealModel.find({}).exec();
+    // node.js 기본 이벤트 리스너는 10개 까지 감지한다. 0을 넘기면 제한 해제
+    process.setMaxListeners(0);
 
-    for (let i = 0; i < meals.length; i++) {
-      const meal = meals[i];
+    const requestList = meals.map(meal => {
       const { name, loginId, loginPassword, mealType, wantToReserve } = meal;
-      try {
-        this.reserve({
-          name,
-          loginId,
-          loginPassword,
-          mealType,
-          wantToReserve
-        });
-      } catch (e) {
-        // one more time~
-        await this.reserve({
-          name,
-          loginId,
-          loginPassword,
-          mealType,
-          wantToReserve
-        });
-      }
-    }
+      return this.reserve({
+        name,
+        loginId,
+        loginPassword,
+        mealType,
+        wantToReserve
+      });
+    });
+
+    const result = await Promise.all(requestList);
+
+    // 성공시 undefined, 예약에 실패 한 경우 props로 넘긴 값을 그대로 return 한다.
+    const retryList = result
+      .filter(r => !!r)
+      .map(meal => {
+        return this.reserve(meal);
+      });
+
+    await Promise.all(retryList);
   }
 }
