@@ -182,6 +182,10 @@ export class TaskService {
    * 다들 프로그램을 돌리는 것 같다.
    * 초기 브라우저 띄우고 로그인 하는데 오래걸려서 우선순위에서 밀려버리는 거였다.
    * 1초 일찍 시작하도록 수정 했더니 잘 됨 ㅋㅋ
+   *
+   * 240319 추가
+   * await 로 reserve 함수 하나씩 실행시키니 DB 순서가 뒤쳐질 경우 예약이 제대로 안되는 경우가 있었다.
+   * 한번에 실행하도록 수정한다.
    */
   @Cron("59 29 7 * * 1-5", {
     name: "autoMeal",
@@ -194,7 +198,7 @@ export class TaskService {
       const meal = meals[i];
       const { name, loginId, loginPassword, mealType, wantToReserve } = meal;
       try {
-        await this.reserve({
+        this.reserve({
           name,
           loginId,
           loginPassword,
