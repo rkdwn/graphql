@@ -29,6 +29,9 @@ export class TestService {
     const loginId = "v13205";
     const loginPassword = "v13205";
 
+    const test = await this.mealModel.find({});
+    console.log(" check all meal data >> ", test);
+
     const PDF_PATH = path.join(__dirname, "..", "..", "./pdf");
 
     const browser = await puppeteer.launch({

@@ -162,7 +162,10 @@ export class TaskService {
         this.logger.warn(`${name}님 ${mealType}코너 예약 완료 되었습니다.`);
       }
       if (buttonStyle.text === "식사 안함" && !buttonStyle.visible) {
-        this.logger.warn(`${name}님 ${mealType}코너 예약 실패 되었습니다.`);
+        this.logger.warn(
+          `${name}님 ${mealType}코너 예약 실패 되었습니다. 재시도 합니다.`
+        );
+        return props;
       }
     }
 
@@ -189,6 +192,10 @@ export class TaskService {
    * await 로 reserve 함수 하나씩 실행시키니 DB 순서가 뒤쳐질 경우 예약이 제대로 안되는 경우가 있었다.
    * 한번에 실행하도록 수정한다.
    */
+  // @Cron("*/15 * * * * 1-5", {
+  //   name: "autoMeal",
+  //   timeZone: "Asia/Seoul"
+  // })
   @Cron("59 29 7 * * 1-5", {
     name: "autoMeal",
     timeZone: "Asia/Seoul"

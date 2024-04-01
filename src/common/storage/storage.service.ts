@@ -13,6 +13,7 @@ type StatObject = {
 export class StorageService {
   private minioClient: Minio.Client;
   constructor(private readonly configService: ConfigService) {
+    console.log("CHECK >>>>> ", this.configService.get("MINIO_ACCESSKEY"));
     this.minioClient = new Minio.Client({
       endPoint: this.configService.get("MINIO_ENDPOINT"),
       port: parseInt(this.configService.get("MINIO_PORT"), 10),
