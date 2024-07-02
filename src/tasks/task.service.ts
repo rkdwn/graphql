@@ -191,15 +191,13 @@ export class TaskService {
    * 240319 추가
    * await 로 reserve 함수 하나씩 실행시키니 DB 순서가 뒤쳐질 경우 예약이 제대로 안되는 경우가 있었다.
    * 한번에 실행하도록 수정한다.
+   *
+   * 업체 변경으로 더이상 해당 예약 시스템을 사용 하지 않는다.
    */
-  // @Cron("*/15 * * * * 1-5", {
+  // @Cron("59 29 7 * * 1-5", {
   //   name: "autoMeal",
   //   timeZone: "Asia/Seoul"
   // })
-  @Cron("59 29 7 * * 1-5", {
-    name: "autoMeal",
-    timeZone: "Asia/Seoul"
-  })
   async cronReserve() {
     const meals = await this.mealModel.find({}).exec();
     // node.js 기본 이벤트 리스너는 10개 까지 감지한다. 0을 넘기면 제한 해제
